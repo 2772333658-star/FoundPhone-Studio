@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { SkinProps } from "../AppSkins";
-import { makeItem } from "../schema";
+import { makeItem, uid } from "../schema";
 import { useSkinState } from "../skinState";
 import {
   chatFetch,
@@ -101,7 +101,7 @@ export function useLiveKakao(p: SkinProps) {
       write([
         ...current.current,
         {
-          id: crypto.randomUUID(),
+          id: uid(),
           thread: p.thread,
           role: "assistant",
           content: data.reply.trim(),
@@ -125,7 +125,7 @@ export function useLiveKakao(p: SkinProps) {
     const next = [
       ...current.current,
       {
-        id: crypto.randomUUID(),
+        id: uid(),
         thread: p.thread,
         role: "user" as const,
         content: text.trim().slice(0, 2000),
