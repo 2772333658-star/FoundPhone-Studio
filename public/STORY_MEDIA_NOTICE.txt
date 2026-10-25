@@ -1,0 +1,16 @@
+Story media notice — Pure Sponsor / Nicholas photo preview
+
+The story author supplied ten photo attachments for a fictional character setup.
+The selected preview uses IMG_3535.jpeg as a fictional paparazzi post,
+IMG_3364(1).jpeg as a fictional Instagram activity post, and IMG_8025.jpeg
+as the character's KakaoTalk avatar. Narrative labels, captions and dates
+are fictional and make no claims about the real subjects of the photos.
+
+All photos retain their original rights. No additional open-source image
+license has been supplied. They are not relicensed under the source-code
+MIT license. Attribution to the submitting author is not a representation
+of copyright ownership or permission from the depicted people.
+
+Seven reserved photos remain outside the compiled story and web package.
+See stories/sponsor/media-manifest.json in the source for the original
+filenames, content hashes and the author's intended narrative uses.

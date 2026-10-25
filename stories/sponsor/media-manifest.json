@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "character": {
+    "id": "nicholas",
+    "name": "Nicholas",
+    "alternateName": "李鹤来",
+    "context": "纯情金主模拟器中的虚构角色"
+  },
+  "source": "User-provided attachments, preserved byte for byte. No additional license grant supplied; excluded from the project MIT license.",
+  "rules": {
+    "instagramPhotoIds": [
+      "nicholas-ig-event"
+    ],
+    "kakaoAvatarId": "nicholas-kkt-avatar",
+    "reservedPhotosArePackaged": false,
+    "reservedPhotosNeedStoryPlacement": true
+  },
+  "photos": [
+    {
+      "order": 1,
+      "id": "nicholas-paparazzi",
+      "file": "assets/nicholas/paparazzi.jpeg",
+      "originalName": "IMG_3535.jpeg",
+      "description": "深色大衣，楼梯街拍",
+      "role": "paparazzi",
+      "placement": "forum",
+      "instagramAllowed": false,
+      "binding": "nicholas-street-photo",
+      "sha256": "b983b5217c8832f57825dfdaf60811d2aabb8d1b58aafbb56de9a50a245d0adc"
+    },
+    {
+      "order": 2,
+      "id": "nicholas-ig-event",
+      "file": "assets/nicholas/ig-event.jpeg",
+      "originalName": "IMG_3364(1).jpeg",
+      "description": "黑色西装、白衬衫双图",
+      "role": "instagram-event-post",
+      "placement": "instagram",
+      "instagramAllowed": true,
+      "binding": "nicholas-event-post",
+      "sha256": "e1cef31c051b8dec236a78b6a728a5ee72d79a7acd000d6aa89a17c51bbd4add"
+    },
+    {
+      "order": 3,
+      "id": "nicholas-graduation",
+      "file": "assets/nicholas/graduation.jpeg",
+      "originalName": "D9D02B28-6CE8-483C-94E9-52A5A1220BD3.jpeg",
+      "description": "蓝底西装领带肖像",
+      "role": "high-school-graduation",
+      "placement": "reserved",
+      "instagramAllowed": false,
+      "binding": null,
+      "sha256": "2a33bfdbda64ece42c2adff47e0e0f5e4ab6e23ba155d3c60f698098c3870b79"
+    },
+    {
+      "order": 4,
+      "id": "nicholas-market-lookback",
+      "file": "assets/nicholas/market-lookback.jpeg",
+      "originalName": "IMG_2540.jpeg",
+      "description": "蓝色花衬衫，市场回头照",
+      "role": "private-travel",
+      "placement": "reserved",
+      "instagramAllowed": false,
+      "binding": null,
+      "sha256": "cd2713b4e921e3c2f0bd6d11b0dc419443da7a29d76e1f085a21d569d7fb6d80"
+    },
+    {
+      "order": 5,
+      "id": "nicholas-market-table",
+      "file": "assets/nicholas/market-table.jpeg",
+      "originalName": "IMG_2539.jpeg",
+      "description": "蓝色花衬衫，餐桌侧脸",
+      "role": "private-travel",
+      "placement": "reserved",
+      "instagramAllowed": false,
+      "binding": null,
+      "sha256": "7f00e38f8a8be1650cc838638d21ea279c9b85dbe7e4fc076678359b177b7304"
+    },
+    {
+      "order": 6,
+      "id": "nicholas-market-stall",
+      "file": "assets/nicholas/market-stall.jpeg",
+      "originalName": "IMG_2545.jpeg",
+      "description": "蓝色花衬衫，摊位前站姿",
+      "role": "private-travel",
+      "placement": "reserved",
+      "instagramAllowed": false,
+      "binding": null,
+      "sha256": "50655526fbd6c17816c743cee7352f59498e65f9c4b19476a762e746604f5bf7"
+    },
+    {
+      "order": 7,
+      "id": "nicholas-transit",
+      "file": "assets/nicholas/transit.jpeg",
+      "originalName": "IMG_2544.jpeg",
+      "description": "交通工具内，手持手机",
+      "role": "private-life",
+      "placement": "reserved",
+      "instagramAllowed": false,
+      "binding": null,
+      "sha256": "ade6ce574cb06c810d5441f3ba0ab6758ca614e63122deee22041048128e81fd"
+    },
+    {
+      "order": 8,
+      "id": "nicholas-rest-selfie",
+      "file": "assets/nicholas/rest-selfie.jpeg",
+      "originalName": "IMG_2538.jpeg",
+      "description": "白色枕头、深绿色上衣自拍",
+      "role": "private-life",
+      "placement": "reserved",
+      "instagramAllowed": false,
+      "binding": null,
+      "sha256": "0f135f79970d9a90ed3e37eeeab49c23fb2ad7a9e7e6f93fb977c164df5f6ba9"
+    },
+    {
+      "order": 9,
+      "id": "nicholas-kkt-avatar",
+      "file": "assets/nicholas/kkt-avatar.jpeg",
+      "originalName": "IMG_8025.jpeg",
+      "description": "蓝色花衬衫，市场侧脸近照",
+      "role": "kakao-avatar",
+      "placement": "kakao",
+      "instagramAllowed": false,
+      "binding": "nicholas-contact",
+      "sha256": "6c802ea8449578d2f83b4c5933a0acb6bec2353dd3f33c8a45b632658dc5c19d"
+    },
+    {
+      "order": 10,
+      "id": "nicholas-theme-park",
+      "file": "assets/nicholas/theme-park.jpeg",
+      "originalName": "IMG_8269.jpeg",
+      "description": "紫色连帽衫，举饮料的游玩照",
+      "role": "private-travel",
+      "placement": "reserved",
+      "instagramAllowed": false,
+      "binding": null,
+      "sha256": "8aa4bb5a7a89c0944ba898142970d16372a62b4cd1517820639709d57b33f95b"
+    }
+  ]
+}
