@@ -23,6 +23,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      - run: npm run test:server
       - run: npm run story:validate
       - run: npm run story:test
       - run: npm run build

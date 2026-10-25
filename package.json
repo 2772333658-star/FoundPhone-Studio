@@ -5,6 +5,9 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
+    "sponsor:build": "node scripts/sponsor.mjs build",
+    "play": "npm run sponsor:build && node --env-file-if-exists=.env server/index.mjs",
+    "test:server": "node --test server/*.test.mjs",
     "dev": "npm run story:build && vite --config vite.runtime.config.ts --host 127.0.0.1",
     "build": "npm run story:build && tsc -b && vite build --config vite.runtime.config.ts && node scripts/package-runtime.mjs",
     "typecheck": "tsc -b",

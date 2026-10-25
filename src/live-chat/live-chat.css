@@ -1,0 +1,67 @@
+.mymy-ui .live-chat-status {
+  padding: 7px 14px;
+  background: #d2dee9;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mymy-ui .live-chat-status span {
+  overflow-wrap: anywhere;
+}
+.mymy-ui .live-chat-status button {
+  flex: none;
+  text-decoration: underline;
+}
+.mymy-ui .live-chat-feedback {
+  padding: 8px 14px;
+  font-size: 12px;
+  background: #e1e8ef;
+}
+.mymy-ui .live-chat-feedback p {
+  margin: 0 0 6px;
+}
+.mymy-ui .live-chat-feedback button {
+  margin-right: 16px;
+  text-decoration: underline;
+}
+.mymy-ui .live-connection {
+  display: grid;
+  gap: 12px;
+}
+.mymy-ui .live-connection p {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+.mymy-ui .live-connection label {
+  display: grid;
+  gap: 5px;
+  font-size: 12px;
+}
+.mymy-ui .live-connection input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+.mymy-ui .live-connection small {
+  font-size: 11px;
+  color: #666;
+}
+.mymy-ui .live-connection button {
+  padding: 10px;
+  background: #fee500;
+  border-radius: 8px;
+  text-align: center;
+}
+.mymy-ui .mymy-local-menu:has(.live-connection) {
+  max-height: 75%;
+  overflow-y: auto;
+}
+.mymy-ui .kzinp button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

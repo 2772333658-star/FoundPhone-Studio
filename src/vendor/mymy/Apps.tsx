@@ -28,6 +28,9 @@ import {
 import type { SkinProps } from "../../AppSkins";
 import { Avatar, Media } from "../../skins/shared";
 import { useSkinState } from "../../skinState";
+import { useLiveKakao } from "../../live-chat/useLiveKakao";
+import { ConnectionForm } from "../../live-chat/ConnectionForm";
+import "../../live-chat/live-chat.css";
 import { makeItem, type Item } from "../../schema";
 import "./ui.css";
 import "./adapter.css";
@@ -64,12 +67,17 @@ function Back({ onClick }: { onClick: () => void }) {
 export function MymyKakao(p: SkinProps) {
   const [tab, setTab] = useSkinState<string>(p, "mymyTab", "聊天"),
     [sent, setSent] = useSkinState<string[]>(p, "mymyKktSent", []),
-    [draft, setDraft] = useState(""),
+    [drafts, setDrafts] = useState<Record<string, string>>({}),
     [query, setQuery] = useState(""),
     [menu, setMenu] = useState(false);
-  const list = grouped(p.items),
+  const draft = drafts[p.thread] || "";
+  const setDraft = (value: string) =>
+    setDrafts((previous) => ({ ...previous, [p.thread]: value }));
+  const live = useLiveKakao(p);
+  const list = grouped([...p.items, ...live.items]),
     messages = [
       ...p.items.filter((i) => i.title === p.thread),
+      ...live.items.filter((i) => i.title === p.thread),
       ...sent.flatMap((raw, index) => {
         try {
           const entry: unknown = JSON.parse(raw);
@@ -114,6 +122,12 @@ export function MymyKakao(p: SkinProps) {
               </button>
             </span>
           </header>
+          {live.enabled && (
+            <div className="live-chat-status">
+              <span>{live.connectionState}</span>
+              <button onClick={() => setMenu(true)}>聊天连接</button>
+            </div>
+          )}
           <div className="msgs kk" ref={scroll}>
             {messages.map((m, i) => {
               const run = messageRun(messages, i);
@@ -155,11 +169,36 @@ export function MymyKakao(p: SkinProps) {
             })}
             {!messages.length && <Blank />}
           </div>
+          {live.enabled && (live.busy || live.pending || live.error) && (
+            <div className="live-chat-feedback">
+              {live.busy ? (
+                <>
+                  <p role="status">Nicholas 正在输入…</p>
+                  <button onClick={live.cancel}>停止等待</button>
+                </>
+              ) : (
+                <>
+                  <p role={live.error ? "alert" : "status"}>
+                    {live.error || "上一条消息还未收到回复。"}
+                  </p>
+                  {live.pending && (
+                    <button disabled={!live.ready} onClick={live.retry}>
+                      重试回复
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          )}
           <form
             className="kzinp"
             onSubmit={(e) => {
               e.preventDefault();
               if (draft.trim()) {
+                if (live.enabled) {
+                  if (live.send(draft)) setDraft("");
+                  return;
+                }
                 setSent([
                   ...sent,
                   JSON.stringify([
@@ -190,7 +229,10 @@ export function MymyKakao(p: SkinProps) {
             <button
               className={draft.trim() ? "go" : ""}
               aria-label="发送KKT消息"
-              disabled={!draft.trim()}
+              disabled={
+                !draft.trim() ||
+                (live.enabled && (!live.ready || live.busy || live.pending))
+              }
             >
               ↑
             </button>
@@ -198,6 +240,12 @@ export function MymyKakao(p: SkinProps) {
           {menu && (
             <div className="mymy-local-menu">
               <strong>{p.thread}</strong>
+              {live.available && (
+                <ConnectionForm
+                  connection={live.connection}
+                  save={live.configure}
+                />
+              )}
               <p>
                 群成员：{[...new Set(messages.map((m) => m.sender))].join("、")}
               </p>
@@ -263,16 +311,22 @@ export function MymyKakao(p: SkinProps) {
               .filter((g) => g.title.includes(query.trim()))
               .map((g) => {
                 const last = g.items.at(-1)!;
+                const contact = g.items.find((i) => !i.outgoing) || last;
                 return (
                   <button
                     className="kzkr kzkcr"
                     key={g.title}
                     onClick={() => p.onThread(g.title)}
                   >
-                    <Avatar name={last.sender || g.title} src={last.avatar} />
+                    <Avatar
+                      name={contact.sender || g.title}
+                      src={contact.avatar}
+                    />
                     <span className="kzkn">
                       <b>{g.title}</b>
-                      <small>{tab === "好友" ? last.sender : last.body}</small>
+                      <small>
+                        {tab === "好友" ? contact.sender : last.body}
+                      </small>
                     </span>
                     <span className="kzkmt">
                       {last.time.slice(-5)}
@@ -304,6 +358,12 @@ export function MymyKakao(p: SkinProps) {
           {menu && (
             <div className="mymy-local-menu">
               <strong>KakaoTalk</strong>
+              {live.available && (
+                <ConnectionForm
+                  connection={live.connection}
+                  save={live.configure}
+                />
+              )}
               <p>作品内聊天</p>
               <button onClick={() => setMenu(false)}>完成</button>
             </div>

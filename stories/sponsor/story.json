@@ -2,8 +2,8 @@
   "scriptVersion": 1,
   "id": "pure-sponsor-phone",
   "title": "纯情金主",
-  "description": "ima 的手机。Nicholas 角色素材预览；完整剧情待续写。人物和叙事用途均为虚构。",
-  "revision": 1,
+  "description": "ima 的手机。和 Nicholas 自由聊天，由你决定是否接受他的私人安排。人物与情节均为虚构。",
+  "revision": 2,
   "phone": {
     "owner": "ima",
     "date": "2026-10-25",
@@ -50,8 +50,11 @@
         {
           "id": "nicholas-contact",
           "senderId": "nicholas",
-          "body": "是我，Nicholas。",
-          "time": "2026-10-25 21:13"
+          "body": "是我，Nicholas。\n\n上次提到的事，我想和你单独谈谈。如果你愿意，时间由你选。条件也可以先在这里聊。",
+          "time": "2026-10-25 21:13",
+          "meta": {
+            "aiCharacter": "nicholas"
+          }
         }
       ]
     }

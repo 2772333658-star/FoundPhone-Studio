@@ -1,23 +1,25 @@
 # 纯情金主 · Nicholas 素材接入
 
-此目录是现有 FoundPhone Studio 中可单独选择的作品草稿，复用原有运行时和 App。默认测试模板与空白手机保持原样。当前仅接入已指定的照片用途和一条来信，尚未编写完整剧情或连接在线 AI；玩家没有预写的回复或决定。
+此目录是现有 FoundPhone Studio 中可单独选择的作品，复用原有运行时和 App。默认测试模板与空白手机保持原样。Nicholas 的 KKT 会话支持自由输入、模型回复、近期上下文、失败重试和双方消息的本地存档。玩家没有预写的回复或决定。模型服务需要单独配置；没有配置时会显示等待连接，不会假装产生 AI 回复。
+
+完整启动方式与部署说明见 [自由聊天配置](../../docs/LIVE_CHAT.md)。
 
 ## 照片安排
 
 顺序以本次上传顺序为准；原图原样保存，文件哈希与原始名称见 `media-manifest.json`。
 
-| 序号 | 文件 | 设定用途 | 当前状态 |
-| --- | --- | --- | --- |
-| 1 | `assets/nicholas/paparazzi.jpeg` | 剧情中的狗仔偷拍 | 论坛帖子配图 |
-| 2 | `assets/nicholas/ig-event.jpeg` | Nicholas 自己发布的 IG 活动图 | 唯一的 IG 照片帖 |
-| 3 | `assets/nicholas/graduation.jpeg` | 高中毕业照 | 备用，未指定学校、年份或发现方式 |
-| 4 | `assets/nicholas/market-lookback.jpeg` | 生活游玩照 | 备用 |
-| 5 | `assets/nicholas/market-table.jpeg` | 生活游玩照 | 备用 |
-| 6 | `assets/nicholas/market-stall.jpeg` | 生活游玩照 | 备用 |
-| 7 | `assets/nicholas/transit.jpeg` | 生活照 | 备用 |
-| 8 | `assets/nicholas/rest-selfie.jpeg` | 生活自拍 | 备用 |
-| 9 | `assets/nicholas/kkt-avatar.jpeg` | KKT 头像 | Nicholas 联系人与 KKT 来信头像 |
-| 10 | `assets/nicholas/theme-park.jpeg` | 生活游玩照 | 备用 |
+| 序号 | 文件                                   | 设定用途                      | 当前状态                         |
+| ---- | -------------------------------------- | ----------------------------- | -------------------------------- |
+| 1    | `assets/nicholas/paparazzi.jpeg`       | 剧情中的狗仔偷拍              | 论坛帖子配图                     |
+| 2    | `assets/nicholas/ig-event.jpeg`        | Nicholas 自己发布的 IG 活动图 | 唯一的 IG 照片帖                 |
+| 3    | `assets/nicholas/graduation.jpeg`      | 高中毕业照                    | 备用，未指定学校、年份或发现方式 |
+| 4    | `assets/nicholas/market-lookback.jpeg` | 生活游玩照                    | 备用                             |
+| 5    | `assets/nicholas/market-table.jpeg`    | 生活游玩照                    | 备用                             |
+| 6    | `assets/nicholas/market-stall.jpeg`    | 生活游玩照                    | 备用                             |
+| 7    | `assets/nicholas/transit.jpeg`         | 生活照                        | 备用                             |
+| 8    | `assets/nicholas/rest-selfie.jpeg`     | 生活自拍                      | 备用                             |
+| 9    | `assets/nicholas/kkt-avatar.jpeg`      | KKT 头像                      | Nicholas 联系人与 KKT 来信头像   |
+| 10   | `assets/nicholas/theme-park.jpeg`      | 生活游玩照                    | 备用                             |
 
 除第 2 张外的照片均不进入 IG。备用照片只存放在本目录中，不写入当前作品 JSON，也不复制到 `public/`；它们不会出现在玩家相册或导出的网页里。未来确定剧情来源后再接入。当前 IG 文案、论坛文字与时间是可替换的虚构预览内容，不代表真实照片信息。
 
@@ -32,7 +34,7 @@ STORY_FILE=stories/sponsor/story.json npm run story:test
 STORY_FILE=stories/sponsor/story.json npm run story:preview
 ```
 
-正式构建该草稿：
+正式构建该作品：
 
 ```sh
 STORY_FILE=stories/sponsor/story.json npm run build
