@@ -986,6 +986,7 @@ function AppContent({
         <div className="catalog-slot" hidden={!!detail}>
           <Suspense fallback={<div className="catalog-loading">正在打开…</div>}>
             <Skin
+              workId={work.id}
               appId={app.id}
               owner={work.phone.owner}
               virtualTime={state.time}

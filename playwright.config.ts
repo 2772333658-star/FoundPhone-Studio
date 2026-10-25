@@ -11,11 +11,20 @@ export default defineConfig({
     "mymy.spec.ts",
     "reference-next.spec.ts",
     "original-icons.spec.ts",
+    "live-chat.spec.ts",
   ],
   timeout: 30000,
   use: {
     baseURL: "http://127.0.0.1:4173",
-    channel: "chrome",
+    channel: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+      ? undefined
+      : "chrome",
+    launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
+      ? {
+          executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
+          args: ["--no-sandbox"],
+        }
+      : undefined,
     headless: true,
     serviceWorkers: "block",
     viewport: { width: 1440, height: 1000 },
