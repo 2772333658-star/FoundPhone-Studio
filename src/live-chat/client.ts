@@ -5,6 +5,25 @@ export type LiveTurn = ChatMessage & {
   time: string;
 };
 export type ChatConnection = { url: string; token: string };
+export type ChatMode = "demo" | "model";
+
+export function loadChatMode(connection: ChatConnection): ChatMode {
+  try {
+    const saved = localStorage.getItem("foundphone-chat-mode");
+    if (saved === "demo" || saved === "model") return saved;
+  } catch {
+    /* A new browser session can still use the free local story. */
+  }
+  return connection.url || connection.token ? "model" : "demo";
+}
+
+export function saveChatMode(mode: ChatMode) {
+  try {
+    localStorage.setItem("foundphone-chat-mode", mode);
+  } catch {
+    /* Keep the selected mode in memory when storage is unavailable. */
+  }
+}
 
 export function parseTurns(raw: string[]): LiveTurn[] {
   return raw.flatMap((text) => {

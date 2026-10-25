@@ -241,6 +241,7 @@ export function MymyKakao(p: SkinProps) {
               {live.available && (
                 <ConnectionForm
                   connection={live.connection}
+                  mode={live.mode}
                   save={live.configure}
                 />
               )}
@@ -359,6 +360,7 @@ export function MymyKakao(p: SkinProps) {
               {live.available && (
                 <ConnectionForm
                   connection={live.connection}
+                  mode={live.mode}
                   save={live.configure}
                 />
               )}

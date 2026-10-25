@@ -39,7 +39,8 @@
   gap: 5px;
   font-size: 12px;
 }
-.mymy-ui .live-connection input {
+.mymy-ui .live-connection input,
+.mymy-ui .live-connection select {
   width: 100%;
   min-width: 0;
   box-sizing: border-box;

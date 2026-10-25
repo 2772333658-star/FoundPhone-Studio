@@ -1,12 +1,32 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   chatUrl,
+  loadChatMode,
   parseTurns,
   recentMessages,
   type ChatMessage,
 } from "./client";
 
 describe("persisted live conversations", () => {
+  it("starts with the free story while retaining an existing model connection or explicit mode", () => {
+    const values = new Map<string, string>();
+    vi.stubGlobal("localStorage", {
+      getItem: (key: string) => values.get(key) || null,
+    });
+    try {
+      expect(loadChatMode({ url: "", token: "" })).toBe("demo");
+      expect(
+        loadChatMode({ url: "https://chat.example/api/chat", token: "" }),
+      ).toBe("model");
+      expect(loadChatMode({ url: "", token: "session-only" })).toBe("model");
+      values.set("foundphone-chat-mode", "demo");
+      expect(
+        loadChatMode({ url: "https://chat.example/api/chat", token: "" }),
+      ).toBe("demo");
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
   it("allows same-origin preview calls but rejects remote HTTP credential destinations", () => {
     vi.stubGlobal("location", new URL("http://terminal.local:4173/"));
     try {

@@ -26,9 +26,15 @@ async function start(page: Page) {
   await page.getByRole("button", { name: "轻触解锁" }).click();
   await openKkt(page);
 }
+async function selectModel(page: Page) {
+  await page.addInitScript(() =>
+    localStorage.setItem("foundphone-chat-mode", "model"),
+  );
+}
 test("free text reaches the model adapter and both sides survive a mobile reload", async ({
   page,
 }) => {
+  await selectModel(page);
   await page.setViewportSize({ width: 393, height: 852 });
   await page.route("**/api/chat/status", (r) =>
     r.fulfill({ json: { ready: true } }),
@@ -84,6 +90,7 @@ test("free text reaches the model adapter and both sides survive a mobile reload
 test("failed replies can be retried after reload without duplicating the player's message", async ({
   page,
 }) => {
+  await selectModel(page);
   await page.route("**/api/chat/status", (r) =>
     r.fulfill({ json: { ready: true } }),
   );
@@ -116,6 +123,7 @@ test("failed replies can be retried after reload without duplicating the player'
 test("unconfigured chat saves multiple messages and resumes after connection without storing credentials", async ({
   page,
 }) => {
+  await selectModel(page);
   let configured = false;
   const requests: Array<{ messages: { role: string; content: string }[] }> = [];
   await page.route("**/api/chat", (r) => {
@@ -173,4 +181,39 @@ test("unconfigured chat saves multiple messages and resumes after connection wit
   expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain(
     "session-access-only",
   );
+});
+
+test("free demo answers typed messages without a service and restores context after reload", async ({
+  page,
+}) => {
+  let modelCalls = 0;
+  await page.route("**/api/chat**", (route) => {
+    modelCalls++;
+    return route.abort();
+  });
+  await start(page);
+  await expect(
+    page.getByText("免费试玩 · 本地剧情回复", { exact: true }),
+  ).toBeVisible();
+  const input = page.getByRole("textbox", { name: "KKT消息" });
+  const send = page.getByRole("button", { name: "发送KKT消息" });
+  await input.fill("条件是什么？");
+  await send.click();
+  await expect(
+    page.getByRole("button", { name: /你还没答应，我记得/ }),
+  ).toBeVisible();
+  await input.fill("明晚八点可以见面");
+  await send.click();
+  await expect(
+    page.getByRole("button", { name: /先按你说的明晚八点/ }),
+  ).toBeVisible();
+  await page.reload();
+  await page.getByRole("button", { name: "轻触解锁" }).click();
+  await openKkt(page);
+  await input.fill("你记得我的时间吗？");
+  await send.click();
+  await expect(
+    page.getByRole("button", { name: /记得。你提过的时间是明晚八点/ }),
+  ).toBeVisible();
+  expect(modelCalls).toBe(0);
 });

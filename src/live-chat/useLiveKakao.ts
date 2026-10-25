@@ -6,12 +6,16 @@ import {
   chatFetch,
   chatUrl,
   loadConnection,
+  loadChatMode,
   parseTurns,
   recentMessages,
   saveConnection,
+  saveChatMode,
   type ChatConnection,
+  type ChatMode,
   type LiveTurn,
 } from "./client";
+import { demoReply } from "./demo";
 
 export function useLiveKakao(p: SkinProps) {
   const available = p.workId === "pure-sponsor-phone" && !p.creator;
@@ -23,6 +27,7 @@ export function useLiveKakao(p: SkinProps) {
   const current = useRef(turns);
   current.current = turns;
   const [connection, setConnection] = useState(loadConnection);
+  const [mode, setMode] = useState(() => loadChatMode(connection));
   const [connectionState, setConnectionState] = useState("正在检查聊天连接…");
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -31,6 +36,11 @@ export function useLiveKakao(p: SkinProps) {
 
   useEffect(() => {
     if (!available) return;
+    if (mode === "demo") {
+      setReady(true);
+      setConnectionState("免费试玩 · 本地剧情回复");
+      return;
+    }
     const check = new AbortController();
     setReady(false);
     setConnectionState("正在检查聊天连接…");
@@ -50,7 +60,7 @@ export function useLiveKakao(p: SkinProps) {
         if (!check.signal.aborted) setConnectionState(e.message);
       });
     return () => check.abort();
-  }, [available, connection]);
+  }, [available, connection, mode]);
 
   useEffect(() => {
     setBusy(false);
@@ -72,7 +82,7 @@ export function useLiveKakao(p: SkinProps) {
     setBusy(true);
     setError("");
     try {
-      const messages = recentMessages([
+      const conversation = [
         ...seed
           .filter((i) => i.body && !i.media)
           .map((i) => ({
@@ -80,23 +90,36 @@ export function useLiveKakao(p: SkinProps) {
             content: i.body,
           })),
         ...history.filter((t) => t.thread === p.thread),
-      ]);
-      const data = await chatFetch(
-        connection,
-        false,
-        AbortSignal.any([active.signal, AbortSignal.timeout(55000)]),
-        {
-          storyId: p.workId,
-          character: "nicholas",
-          messages,
-        },
-      );
+      ];
+      let reply: unknown;
+      if (mode === "demo") {
+        // A small, cancellable typing pause; all dialogue stays in the browser.
+        await new Promise<void>((resolve) => {
+          const finish = () => {
+            clearTimeout(timer);
+            active.signal.removeEventListener("abort", finish);
+            resolve();
+          };
+          const timer = setTimeout(finish, 420);
+          active.signal.addEventListener("abort", finish, { once: true });
+        });
+        if (active.signal.aborted) return;
+        reply = demoReply(conversation);
+      } else {
+        const data = await chatFetch(
+          connection,
+          false,
+          AbortSignal.any([active.signal, AbortSignal.timeout(55000)]),
+          {
+            storyId: p.workId,
+            character: "nicholas",
+            messages: recentMessages(conversation),
+          },
+        );
+        reply = data.reply;
+      }
       if (active.signal.aborted) return;
-      if (
-        typeof data.reply !== "string" ||
-        !data.reply.trim() ||
-        data.reply.length > 6000
-      )
+      if (typeof reply !== "string" || !reply.trim() || reply.length > 6000)
         throw Error("这次没有收到完整回复，可以重试。");
       write([
         ...current.current,
@@ -104,7 +127,7 @@ export function useLiveKakao(p: SkinProps) {
           id: uid(),
           thread: p.thread,
           role: "assistant",
-          content: data.reply.trim(),
+          content: reply.trim(),
           time: p.virtualTime || "21:13",
         },
       ]);
@@ -137,14 +160,17 @@ export function useLiveKakao(p: SkinProps) {
     if (ready) void request(next);
     return true;
   };
-  const configure = (next: ChatConnection) => {
-    chatUrl(next.url);
+  const configure = (next: ChatConnection, nextMode: ChatMode) => {
+    if (nextMode === "model") chatUrl(next.url);
     controller.current?.abort();
     controller.current = null;
     setBusy(false);
     setError("");
+    setReady(nextMode === "demo");
     saveConnection(next);
+    saveChatMode(nextMode);
     setConnection(next);
+    setMode(nextMode);
   };
   const items = available
     ? turns.map((t) => {
@@ -174,6 +200,7 @@ export function useLiveKakao(p: SkinProps) {
     error,
     connectionState,
     connection,
+    mode,
     configure,
     send,
     retry: () => {
