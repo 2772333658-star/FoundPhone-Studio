@@ -38,6 +38,7 @@ export function recentMessages(messages: ChatMessage[]): ChatMessage[] {
 
 export function chatUrl(value: string): string {
   const url = new URL(value || "./api/chat", location.href);
+  const sameOrigin = url.origin === new URL(location.href).origin;
   if (
     url.username ||
     url.password ||
@@ -46,10 +47,11 @@ export function chatUrl(value: string): string {
     (url.protocol !== "https:" &&
       !(
         url.protocol === "http:" &&
-        ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)
+        (sameOrigin ||
+          ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname))
       ))
   )
-    throw Error("请填写 HTTPS 聊天服务地址；本机可使用 HTTP。");
+    throw Error("请填写同源或 HTTPS 聊天服务地址；本机可使用 HTTP。");
   return url.href.replace(/\/$/, "");
 }
 
@@ -102,7 +104,11 @@ export async function chatFetch(
     );
   } catch (error) {
     if (signal.aborted) throw error;
-    throw Error("暂时联系不上聊天服务。消息已保留，可以稍后重试。");
+    throw Error(
+      status
+        ? "可发送消息 · 自动回复暂未连接"
+        : "暂时联系不上聊天服务。消息已保留，可以稍后重试。",
+    );
   }
   let data;
   try {

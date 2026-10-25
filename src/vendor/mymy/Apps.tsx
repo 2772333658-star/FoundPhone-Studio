@@ -179,12 +179,13 @@ export function MymyKakao(p: SkinProps) {
               ) : (
                 <>
                   <p role={live.error ? "alert" : "status"}>
-                    {live.error || "上一条消息还未收到回复。"}
+                    {live.error ||
+                      (live.ready
+                        ? "上一条消息还未收到回复。"
+                        : "消息已保存在当前浏览器，自动回复尚未开启。")}
                   </p>
-                  {live.pending && (
-                    <button disabled={!live.ready} onClick={live.retry}>
-                      重试回复
-                    </button>
+                  {live.pending && live.ready && (
+                    <button onClick={live.retry}>重试回复</button>
                   )}
                 </>
               )}
@@ -229,10 +230,7 @@ export function MymyKakao(p: SkinProps) {
             <button
               className={draft.trim() ? "go" : ""}
               aria-label="发送KKT消息"
-              disabled={
-                !draft.trim() ||
-                (live.enabled && (!live.ready || live.busy || live.pending))
-              }
+              disabled={!draft.trim() || (live.enabled && live.busy)}
             >
               ↑
             </button>

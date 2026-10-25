@@ -42,7 +42,9 @@ export function useLiveKakao(p: SkinProps) {
       .then((data) => {
         if (check.signal.aborted) return;
         setReady(data.ready === true);
-        setConnectionState(data.ready ? "聊天服务已连接" : "等待连接模型服务");
+        setConnectionState(
+          data.ready ? "聊天服务已连接" : "可发送消息 · 自动回复未开启",
+        );
       })
       .catch((e: Error) => {
         if (!check.signal.aborted) setConnectionState(e.message);
@@ -64,7 +66,7 @@ export function useLiveKakao(p: SkinProps) {
     setRaw(next.map((t) => JSON.stringify(t)));
   };
   const request = async (history: LiveTurn[]) => {
-    if (!enabled || controller.current) return;
+    if (!enabled || !ready || controller.current) return;
     const active = new AbortController();
     controller.current = active;
     setBusy(true);
@@ -119,8 +121,7 @@ export function useLiveKakao(p: SkinProps) {
   const pending =
     turns.filter((t) => t.thread === p.thread).at(-1)?.role === "user";
   const send = (text: string) => {
-    if (!enabled || !ready || pending || controller.current || !text.trim())
-      return false;
+    if (!enabled || controller.current || !text.trim()) return false;
     const next = [
       ...current.current,
       {
@@ -132,7 +133,8 @@ export function useLiveKakao(p: SkinProps) {
       },
     ];
     write(next);
-    void request(next);
+    setError("");
+    if (ready) void request(next);
     return true;
   };
   const configure = (next: ChatConnection) => {
@@ -140,6 +142,7 @@ export function useLiveKakao(p: SkinProps) {
     controller.current?.abort();
     controller.current = null;
     setBusy(false);
+    setError("");
     saveConnection(next);
     setConnection(next);
   };

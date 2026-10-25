@@ -113,21 +113,44 @@ test("failed replies can be retried after reload without duplicating the player'
   ).toHaveCount(1);
   expect(attempts).toBe(2);
 });
-test("connection setup keeps the access token out of persistent player settings", async ({
+test("unconfigured chat saves multiple messages and resumes after connection without storing credentials", async ({
   page,
 }) => {
   let configured = false;
+  const requests: Array<{ messages: { role: string; content: string }[] }> = [];
+  await page.route("**/api/chat", (r) => {
+    requests.push(r.request().postDataJSON());
+    return r.fulfill({ json: { reply: "两条消息我都看到了。" } });
+  });
   await page.route("**/api/chat/status", (r) =>
     r.fulfill({ json: { ready: configured } }),
   );
   await start(page);
   await expect(
-    page.getByText("等待连接模型服务", { exact: true }),
+    page.getByText("可发送消息 · 自动回复未开启", { exact: true }),
   ).toBeVisible();
   await page.getByRole("textbox", { name: "KKT消息" }).fill("你好。");
+  await page.getByRole("button", { name: "发送KKT消息" }).click();
   await expect(
-    page.getByRole("button", { name: "发送KKT消息" }),
-  ).toBeDisabled();
+    page.getByRole("button", { name: "你好。", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("textbox", { name: "KKT消息" }).fill("再补充一句。");
+  await page.getByRole("button", { name: "发送KKT消息" }).click();
+  await expect(
+    page.getByText("消息已保存在当前浏览器，自动回复尚未开启。", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  expect(requests).toHaveLength(0);
+  await page.reload();
+  await page.getByRole("button", { name: "轻触解锁" }).click();
+  await openKkt(page);
+  await expect(
+    page.getByRole("button", { name: "你好。", exact: true }),
+  ).toHaveCount(1);
+  await expect(
+    page.getByRole("button", { name: "再补充一句。", exact: true }),
+  ).toHaveCount(1);
   await page.getByRole("button", { name: "聊天连接", exact: true }).click();
   await page
     .getByLabel("访问口令", { exact: true })
@@ -135,6 +158,15 @@ test("connection setup keeps the access token out of persistent player settings"
   configured = true;
   await page.getByRole("button", { name: "保存连接" }).click();
   await expect(page.getByText("聊天服务已连接", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "完成", exact: true }).click();
+  await page.getByRole("button", { name: "重试回复" }).click();
+  await expect(
+    page.getByRole("button", { name: "两条消息我都看到了。", exact: true }),
+  ).toBeVisible();
+  expect(requests[0].messages.slice(-2)).toEqual([
+    { role: "user", content: "你好。" },
+    { role: "user", content: "再补充一句。" },
+  ]);
   expect(
     await page.evaluate(() => sessionStorage.getItem("foundphone-chat-token")),
   ).toBe("session-access-only");

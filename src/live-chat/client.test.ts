@@ -1,7 +1,27 @@
-import { describe, expect, it } from "vitest";
-import { parseTurns, recentMessages, type ChatMessage } from "./client";
+import { describe, expect, it, vi } from "vitest";
+import {
+  chatUrl,
+  parseTurns,
+  recentMessages,
+  type ChatMessage,
+} from "./client";
 
 describe("persisted live conversations", () => {
+  it("allows same-origin preview calls but rejects remote HTTP credential destinations", () => {
+    vi.stubGlobal("location", new URL("http://terminal.local:4173/"));
+    try {
+      expect(chatUrl("")).toBe("http://terminal.local:4173/api/chat");
+      expect(() => chatUrl("http://other.example/api/chat")).toThrow();
+      expect(chatUrl("https://chat.example/api/chat")).toBe(
+        "https://chat.example/api/chat",
+      );
+      expect(() =>
+        chatUrl("https://user:pass@chat.example/api/chat"),
+      ).toThrow();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
   it("recovers valid user and assistant turns without accepting corrupted records", () => {
     const valid = {
       id: "one",
